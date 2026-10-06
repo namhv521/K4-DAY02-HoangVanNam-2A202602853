@@ -1,6 +1,6 @@
 """benchmark.py - đo độ trễ suy luận đúng cách (slide Day 2, trang 73 và 75; GUIDE.md mục 4.1).
 
-PSEUDO-CODE: bạn tự hoàn thiện mọi hàm có `raise NotImplementedError`.
+Cài đặt hoàn chỉnh cho Colab.
 
 Quy tắc đo (vi phạm bị trừ điểm, RUBRIC mục 3):
   - warmup: bỏ >= 10 lần chạy đầu
@@ -22,7 +22,7 @@ def bench(fn, warmup: int = 10, iters: int = 100, sync=None) -> dict:
 
     `sync` là hàm đồng bộ (ví dụ torch.cuda.synchronize) hoặc None trên CPU.
 
-    TODO:
+    Thực hiện:
       - chạy warmup lần đầu rồi bỏ
       - với mỗi lần đo: sync(); t0 = time.perf_counter(); fn(); sync(); lấy hiệu * 1000
       - trả về {"p50": ..., "p95": ..., "p99": ..., "mean": ..., "n": iters}
@@ -53,7 +53,7 @@ def latency_report(model, batch_size: int, img_size: int, dtype: str = "fp32", d
         {"gpu": ..., "dtype": ..., "batch": ..., "img_size": ..., "p50": ..., "p95": ..., "p99": ...,
          "images_per_s": batch_size / (p50 / 1000), "torch": torch.__version__}
 
-    TODO:
+    Thực hiện:
       - model.eval(), torch.inference_mode()
       - dtype: "fp32" | "amp" (autocast) | "fp16" (model.half())
       - gọi bench(...) với sync phù hợp; lấy tên GPU bằng torch.cuda.get_device_name
@@ -63,7 +63,7 @@ def latency_report(model, batch_size: int, img_size: int, dtype: str = "fp32", d
 
 
 def tta_latency(model, k_views: int, **kw) -> dict:
-    """Độ trễ của TTA K view: xấp xỉ K lần một lượt chạy (slide trang 63). TODO: đo thật, so với K * p50."""
+    """Độ trễ của TTA K view: xấp xỉ K lần một lượt chạy (slide trang 63). Thực hiện: đo thật, so với K * p50."""
     if k_views < 1:
         raise ValueError('Positive number of views required')
     return _latency(model, k_views=k_views, **kw)

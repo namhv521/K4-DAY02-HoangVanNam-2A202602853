@@ -1,4 +1,4 @@
-﻿"""timm backbones and native AdamW groups."""
+"""timm backbones and native AdamW groups."""
 import torch
 import timm
 

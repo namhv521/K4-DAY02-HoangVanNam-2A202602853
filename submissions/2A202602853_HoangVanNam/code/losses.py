@@ -1,4 +1,4 @@
-﻿"""Loss and batch-mixing implementations."""
+"""Loss and batch-mixing implementations."""
 import numpy as np
 import torch
 from torch import nn

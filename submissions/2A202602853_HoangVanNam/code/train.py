@@ -1,4 +1,4 @@
-﻿"""One configurable train loop. Test inference stays off until the final stage."""
+"""One configurable train loop. Test inference stays off until the final stage."""
 from __future__ import annotations
 import argparse
 import hashlib

@@ -1,6 +1,6 @@
 """inference.py - các phương pháp suy luận (Bước 3 của GUIDE.md).
 
-PSEUDO-CODE: bạn tự hoàn thiện mọi hàm có `raise NotImplementedError`.
+Cài đặt hoàn chỉnh cho Colab.
 Liên hệ slide Day 2: TTA (trang 62-66, 75), ensemble/EMA/soup (trang 67), độ phân giải kiểm tra
 (trang 68), temperature scaling (trang 69), gộp BatchNorm (trang 71).
 
@@ -27,7 +27,7 @@ def predict_logits(model, loader, device, view=None):
     """Chạy model trên loader và gom logit theo đúng thứ tự file.
 
     `view` là hàm biến đổi batch ảnh trước khi đưa vào model (ví dụ lật ngang), hoặc None.
-    TODO: model.eval(), torch.inference_mode(), (tuỳ chọn) autocast. Trả về numpy.
+    Thực hiện: model.eval(), torch.inference_mode(), (tuỳ chọn) autocast. Trả về numpy.
     """
     model.eval()
     names, labels, outputs = [], [], []
@@ -51,12 +51,12 @@ def view_identity(x):
 
 
 def view_hflip(x):
-    """Lật ngang batch (N, C, H, W). TODO: dùng torch.flip trên chiều rộng (slide trang 75)."""
+    """Lật ngang batch (N, C, H, W). Thực hiện: dùng torch.flip trên chiều rộng (slide trang 75)."""
     return torch.flip(x, [-1])
 
 
 def views_multicrop(x, crop: int):
-    """5 crop (4 góc + giữa) kích thước `crop`, và tuỳ chọn thêm bản lật. Trả về list các batch. TODO."""
+    """5 crop (4 góc + giữa) kích thước `crop`, và tuỳ chọn thêm bản lật. Trả về list các batch. Đã cài đặt."""
     h, w = x.shape[-2:]
     if not 0 < crop <= min(h, w):
         raise ValueError('Crop must fit input')
@@ -65,7 +65,7 @@ def views_multicrop(x, crop: int):
 
 
 def views_multiscale(x, sizes):
-    """Resize batch về từng kích thước trong `sizes`, trả về list các batch. TODO.
+    """Resize batch về từng kích thước trong `sizes`, trả về list các batch. Đã cài đặt.
 
     Lưu ý: model phải chấp nhận ảnh khác kích thước lúc train (CNN có global pooling thì được;
     ViT/Swin cần xử lý riêng vị trí/cửa sổ). Ghi rõ giới hạn bạn gặp.
@@ -81,7 +81,7 @@ def aggregate_views(logits_per_view, space: str = "prob"):
       - space="prob":  trung bình softmax của từng view
       - space="logit": trung bình logit rồi softmax
     Slide chưa kết luận cách nào luôn tốt hơn: chọn một và ghi rõ, hoặc so sánh cả hai (I03).
-    TODO: trả về xác suất (N, 9) đã chuẩn hoá.
+    Thực hiện: trả về xác suất (N, 9) đã chuẩn hoá.
     """
     if not logits_per_view or len({np.asarray(z).shape for z in logits_per_view}) != 1:
         raise ValueError('Non-empty, aligned views required')
@@ -93,7 +93,7 @@ def aggregate_views(logits_per_view, space: str = "prob"):
 
 
 def ensemble_probs(list_of_probs):
-    """Trung bình xác suất của nhiều mô hình (khác backbone hoặc khác seed). TODO.
+    """Trung bình xác suất của nhiều mô hình (khác backbone hoặc khác seed). Đã cài đặt.
 
     Chi phí suy luận = số mô hình. Chỉ ghép các mô hình trên CÙNG tập ảnh và cùng thứ tự file.
     """
@@ -108,7 +108,7 @@ def ensemble_probs(list_of_probs):
 def fit_temperature(val_logits, val_labels) -> float:
     """Tìm nhiệt độ T > 0 cực tiểu NLL trên VAL: p = softmax(logit / T)  (slide trang 69).
 
-    TODO: tối ưu hoá một tham số (LBFGS trên log T, hoặc tìm lưới thô rồi tinh).
+    Thực hiện: tối ưu hoá một tham số (LBFGS trên log T, hoặc tìm lưới thô rồi tinh).
     Accuracy không đổi vì thứ tự lớp không đổi. KHÔNG khớp T trên test.
     """
     z, y = np.asarray(val_logits, dtype=np.float64), np.asarray(val_labels)
@@ -127,7 +127,7 @@ def fit_temperature(val_logits, val_labels) -> float:
 
 
 def apply_temperature(logits, T: float):
-    """Trả về softmax(logits / T). TODO."""
+    """Trả về softmax(logits / T). Đã cài đặt."""
     z = np.asarray(logits, dtype=np.float64)
     if z.ndim != 2 or not np.isfinite(z).all() or not np.isfinite(T) or T <= 0:
         raise ValueError('Finite logits and positive temperature required')
@@ -142,7 +142,7 @@ def fuse_conv_bn(model):
 
         w' = gamma * w / sqrt(var + eps)        b' = beta + gamma * (b - mean) / sqrt(var + eps)
 
-    TODO:
+    Thực hiện:
       - model.eval() trước
       - với từng cặp (Conv2d, BatchNorm2d) liền kề: tạo conv mới (có bias) và thay BN bằng Identity
       - kiểm tra: đầu ra trước/sau gộp lệch nhau cỡ 1e-5 trở xuống (in ra sai số lớn nhất)

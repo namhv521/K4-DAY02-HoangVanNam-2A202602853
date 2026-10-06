@@ -1,4 +1,4 @@
-﻿"""DeepWeeds validation and shared preprocessing."""
+"""DeepWeeds validation and shared preprocessing."""
 from pathlib import Path
 import random
 import numpy as np
